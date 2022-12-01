@@ -70,7 +70,7 @@ class _HomepageState extends State<Homepage> {
                     icon: Icon(Icons.door_back_door_rounded),
                     border: OutlineInputBorder(),
                     labelText: 'Port',
-                    hintText: '29015',
+                    hintText: '28015',
                   ),
                   validator: (String? value) {
                     if (value!.isEmpty) {
@@ -95,12 +95,6 @@ class _HomepageState extends State<Homepage> {
                           labelText: 'User',
                           hintText: 'Admin',
                         ),
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'Enter the IP address';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                     SizedBox(
@@ -113,12 +107,6 @@ class _HomepageState extends State<Homepage> {
                           labelText: 'Pass',
                           hintText: '**********',
                         ),
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'Enter the IP address';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                   ],
@@ -142,7 +130,6 @@ class _HomepageState extends State<Homepage> {
                     setState(() {
                       selectedValue = value;
                     });
-                    
                   },
                 ),
                 const SizedBox(
@@ -157,8 +144,47 @@ class _HomepageState extends State<Homepage> {
                       borderRadius: BorderRadius.circular(7.5),
                     ),
                   ),
-                  onPressed: () {},
-                  child: const Text('Connetti'),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            duration: Duration(seconds: 1, microseconds: 500),
+                            content: Text('Connecting ...')),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => selectedValue == 'RethinkDB'
+                              ? RethinkDB(
+                                  ip: _ip.text,
+                                  port: int.parse(_port.text),
+                                  user: _user.text,
+                                  pass: _pass.text,
+                                )
+                              : selectedValue == 'Firebase'
+                              ? Container(
+                                  padding: const EdgeInsets.all(20),
+                                  child: const Text(
+                                    'This database is not supported yet',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.all(20),
+                                  child: const Text(
+                                    'ERROR NO DATABASE SELECTED',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Connect'),
                 ),
               ],
             ),
